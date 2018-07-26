@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_centerVertical="true"
+    android:padding="1dp">
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:layout_marginLeft="15dp"
+        android:id="@+id/iv_user"
+        android:layout_width="43dp"
+        android:layout_height="43dp"
+        android:src="@drawable/user" />
+
+    <com.makeramen.roundedimageview.RoundedImageView
+        android:layout_marginLeft="11dp"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:layout_width="180dp"
+        android:layout_height="230dp"
+        android:id="@+id/iv_image"
+        android:layout_toRightOf="@id/iv_user"
+        android:scaleType="centerCrop"
+        app:riv_mutate_background="true"
+        app:riv_corner_radius="20dip" />
+
+    <com.wang.avi.AVLoadingIndicatorView
+        android:id="@+id/av_load"
+        android:layout_marginLeft="141dp"
+        android:layout_centerVertical="true"
+        app:indicatorColor="@color/colorAccent"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        app:indicatorName="LineSpinFadeLoaderIndicator"
+        />
+
+</RelativeLayout>

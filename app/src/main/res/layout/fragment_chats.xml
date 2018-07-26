@@ -1,0 +1,48 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context="com.example.vietvan.lapitchat.ui.fragment.FriendsFragment">
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/rv_chats"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+    <RelativeLayout
+        android:id="@+id/rl_empty"
+        android:layout_centerInParent="true"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <ImageView
+            android:id="@+id/iv_duck"
+            android:layout_centerInParent="true"
+            android:src="@drawable/duck"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <TextView
+            android:textColor="#bebebe"
+            android:textSize="17sp"
+            android:layout_marginTop="5dp"
+            android:layout_centerInParent="true"
+            android:layout_below="@id/iv_duck"
+            android:text="No Chats"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+    </RelativeLayout>
+
+    <com.rey.material.widget.FloatingActionButton
+        android:id="@+id/fab_gr"
+        android:layout_gravity="right|bottom"
+        android:layout_marginBottom="15dp"
+        android:layout_marginRight="15dp"
+        app:fab_backgroundColor="@color/colorPrimary"
+        app:fab_iconSrc="@drawable/ic_group_black_24dp"
+        android:layout_width="40dp"
+        android:layout_height="40dp" />
+
+</FrameLayout>

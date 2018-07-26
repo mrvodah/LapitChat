@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.CardView android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    app:cardBackgroundColor="@color/white"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    app:cardCornerRadius="3dp"
+    app:cardElevation="5dp"
+    app:cardUseCompatPadding="true">
+
+    <RelativeLayout
+        android:padding="7dp"
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/iv_user"
+            android:src="@drawable/user"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_marginRight="10dp"/>
+
+        <TextView
+            android:textColor="@color/black"
+            android:id="@+id/tv_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="1dp"
+            android:layout_toRightOf="@id/iv_user"
+            android:paddingRight="25dp"
+            android:text="Username"
+            android:textSize="19sp" />
+
+        <TextView
+            android:textStyle="italic"
+            android:layout_below="@id/tv_name"
+            android:id="@+id/tv_status"
+            android:layout_toRightOf="@id/iv_user"
+            android:text="Hi there, i'm using Lapit Chat"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <Button
+            android:layout_toRightOf="@id/iv_user"
+            android:textSize="12sp"
+            android:textColor="@color/colorPrimary"
+            android:id="@+id/iv_tick"
+            android:layout_below="@id/iv_user"
+            android:text="Accept"
+            android:layout_width="70dp"
+            android:layout_height="40dp" />
+
+        <Button
+            android:textSize="12sp"
+            android:layout_marginLeft="5dp"
+            android:textColor="@color/colorPrimary"
+            android:id="@+id/iv_cancel"
+            android:layout_toRightOf="@id/iv_tick"
+            android:layout_below="@id/iv_user"
+            android:text="Deny"
+            android:layout_width="70dp"
+            android:layout_height="40dp" />
+
+    </RelativeLayout>
+
+</android.support.v7.widget.CardView>

@@ -1,0 +1,200 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/root_view"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.example.vietvan.lapitchat.ui.activity.Chats">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="55dp"
+        android:background="@color/colorPrimary">
+
+        <ImageView
+            android:scaleType="center"
+            android:layout_marginLeft="15dp"
+            android:layout_centerVertical="true"
+            android:id="@+id/iv_back"
+            android:src="@drawable/ic_arrow_back_black_24dp"
+            android:layout_width="35dp"
+            android:layout_height="35dp" />
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:layout_marginRight="10dp"
+            android:id="@+id/iv_ava"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="30dp"
+            android:layout_toRightOf="@id/iv_back"
+            android:src="@drawable/user"
+            android:layout_width="40dp"
+            android:layout_height="40dp" />
+
+        <TextView
+            android:layout_marginTop="10dp"
+            android:textColor="@color/white"
+            android:textSize="16sp"
+            android:id="@+id/tv_name"
+            android:layout_toRightOf="@id/iv_ava"
+            android:text="Username"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <TextView
+            android:id="@+id/tv_lastSeen"
+            android:maxLines="1"
+            android:ellipsize="end"
+            android:textSize="12sp"
+            android:textColor="@color/white"
+            android:layout_below="@id/tv_name"
+            android:layout_toRightOf="@id/iv_ava"
+            android:text="Active 5 minutes"
+            android:layout_width="100dp"
+            android:layout_height="wrap_content" />
+
+        <ImageView
+            android:scaleType="center"
+            android:id="@+id/iv_info"
+            android:layout_marginRight="15dp"
+            android:layout_centerVertical="true"
+            android:layout_alignParentRight="true"
+            android:src="@drawable/ic_info_outline_black_24dp"
+            android:layout_width="30dp"
+            android:layout_height="30dp" />
+
+        <ImageView
+            android:scaleType="center"
+            android:id="@+id/iv_video"
+            android:layout_marginRight="13dp"
+            android:layout_centerVertical="true"
+            android:layout_toLeftOf="@id/iv_info"
+            android:src="@drawable/ic_videocam_black_24dp"
+            android:layout_width="30dp"
+            android:layout_height="30dp" />
+
+        <ImageView
+            android:scaleType="center"
+            android:id="@+id/iv_call"
+            android:layout_marginRight="13dp"
+            android:layout_centerVertical="true"
+            android:layout_toLeftOf="@id/iv_video"
+            android:src="@drawable/ic_phone_black_24dp"
+            android:layout_width="30dp"
+            android:layout_height="30dp" />
+
+    </RelativeLayout>
+
+    <android.support.v4.widget.SwipeRefreshLayout
+        android:id="@+id/swipe_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="55dp"
+        android:layout_above="@id/ll_bot">
+
+        <android.support.v7.widget.RecyclerView
+            android:paddingBottom="10dp"
+            android:id="@+id/rv_messages"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
+
+    </android.support.v4.widget.SwipeRefreshLayout>
+
+    <LinearLayout
+        android:gravity="center_vertical"
+        android:id="@+id/ll_bot"
+        android:paddingRight="7dp"
+        android:paddingLeft="7dp"
+        android:layout_marginBottom="7dp"
+        android:layout_marginTop="7dp"
+        android:layout_alignParentBottom="true"
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <ImageView
+            android:id="@+id/iv_add"
+            android:padding="7dp"
+            android:src="@drawable/add"
+            android:layout_width="40dp"
+            android:layout_height="40dp"/>
+
+        <LinearLayout
+            android:id="@+id/ll_collapse"
+            android:orientation="horizontal"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+            <ImageView
+                android:layout_marginRight="3dp"
+                android:layout_marginLeft="3dp"
+                android:padding="5dp"
+                android:id="@+id/iv_camera"
+                android:src="@drawable/ic_camera_alt_black_24dp"
+                android:layout_width="40dp"
+                android:layout_height="40dp"/>
+
+            <ImageView
+                android:layout_marginRight="3dp"
+                android:padding="5dp"
+                android:id="@+id/iv_photo"
+                android:src="@drawable/ic_photo_black_24dp"
+                android:layout_width="40dp"
+                android:layout_height="40dp"/>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="right|center_vertical"
+            android:orientation="horizontal">
+
+            <FrameLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+
+                <hani.momanii.supernova_emoji_library.Helper.EmojiconEditText
+                    android:id="@+id/edt_message"
+                    android:layout_width="160dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginRight="10dp"
+                    android:background="@drawable/bg_edt"
+                    android:hint="Type a message"
+                    android:inputType="textCapSentences|textMultiLine"
+                    android:paddingBottom="10dp"
+                    android:paddingLeft="15dp"
+                    android:paddingRight="10dp"
+                    android:paddingTop="10dp"
+                    android:textSize="14sp" />
+
+                <ImageView
+                    android:id="@+id/iv_icon"
+                    android:layout_marginRight="15dp"
+                    android:layout_gravity="right|center_vertical"
+                    android:padding="5dp"
+                    android:src="@drawable/kiss"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp" />
+                
+            </FrameLayout>
+
+            <ImageView
+                android:padding="8dp"
+                android:id="@+id/iv_send"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:src="@drawable/send" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <View
+        android:layout_above="@id/ll_bot"
+        android:background="@color/gray"
+        android:layout_width="match_parent"
+        android:layout_height="1dp" />
+
+</RelativeLayout>

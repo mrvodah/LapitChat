@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#673bb7</color>
+    <color name="colorPrimaryDark">#512da7</color>
+    <color name="colorAccent">#ff5521</color>
+
+    <color name="btnSignUp">#39796b</color>
+    <color name="btnSignIn">#A9d440</color>
+
+    <color name="white">#ffffff</color>
+    <color name="black">#000</color>
+
+    <color name="purple">#9734be</color>
+    <color name="gray">#d2d2d2</color>
+
+    <color name="sinch_purple">#ff63029d</color>
+    <color name="off_white">#fffafafa</color>
+    <color name="greyish">#fff2f1f2</color>
+</resources>

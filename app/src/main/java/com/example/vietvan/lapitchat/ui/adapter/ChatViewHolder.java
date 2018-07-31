@@ -1,5 +1,7 @@
 package com.example.vietvan.lapitchat.ui.adapter;
 
+import android.graphics.Color;
+import android.graphics.Typeface;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.ImageView;
@@ -42,6 +44,31 @@ public class ChatViewHolder extends RecyclerView.ViewHolder implements View.OnCl
 
     public void setTime(String time){
 
+    }
+
+    public void setNotSeen(){
+
+        name.setTextSize(20);
+        name.setTypeface(Typeface.DEFAULT_BOLD);
+
+        message.setTextSize(15);
+        message.setTextColor(Color.parseColor("#000000"));
+        message.setTypeface(Typeface.DEFAULT_BOLD);
+
+        time.setTextSize(11);
+        time.setTypeface(Typeface.DEFAULT_BOLD);
+    }
+
+    public void setSeen(){
+        name.setTextSize(19);
+        name.setTypeface(Typeface.DEFAULT);
+
+        message.setTextSize(14);
+        message.setTextColor(Color.parseColor("#737373"));
+        message.setTypeface(Typeface.defaultFromStyle(Typeface.ITALIC));
+
+        time.setTextSize(10);
+        time.setTypeface(Typeface.DEFAULT);
     }
 
     public void setOnline(String is){

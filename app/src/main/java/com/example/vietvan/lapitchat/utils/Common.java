@@ -4,6 +4,8 @@ import android.app.Activity;
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.os.Build;
+import android.provider.Settings;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 
@@ -21,6 +23,14 @@ public class Common {
 
     public static String getUid(){
         return FirebaseAuth.getInstance().getCurrentUser().getUid();
+    }
+
+    public static boolean canDrawOverlays(Context context){
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
+            return true;
+        }else{
+            return Settings.canDrawOverlays(context);
+        }
     }
 
     public static boolean isConnectedToInternet(Context context){

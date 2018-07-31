@@ -79,10 +79,6 @@ public class ImageUtils {
         return uri;
     }
 
-    public static Uri get(){
-        return Uri.fromFile(tempFile);
-    }
-
     public static Bitmap getBitmap(Context context){
         Bitmap bitmap = BitmapFactory.decodeFile(tempFile.getPath());
 

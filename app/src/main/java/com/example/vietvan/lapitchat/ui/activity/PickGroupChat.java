@@ -35,7 +35,7 @@ public class PickGroupChat extends AppCompatActivity {
     SwipeRefreshLayout swipeLayout;
 
     FirebaseDatabase database;
-    DatabaseReference chats, users, groups, conversations, root;
+    DatabaseReference friends, users, groups, conversations, root;
 
     String uid;
     List<Group> list;
@@ -54,7 +54,8 @@ public class PickGroupChat extends AppCompatActivity {
         group = new Group(uid);
 
         database = FirebaseDatabase.getInstance();
-        chats = database.getReference("Chats");
+        root = database.getReference();
+        friends = database.getReference("Friends");
         users = database.getReference("Users");
         groups = database.getReference("Groups");
         conversations = database.getReference("Conversations");
@@ -83,7 +84,7 @@ public class PickGroupChat extends AppCompatActivity {
 
     private void loadListFriends() {
 
-        chats.child(uid).addChildEventListener(new ChildEventListener() {
+        friends.child(uid).addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
 

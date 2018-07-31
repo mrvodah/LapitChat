@@ -6,7 +6,7 @@ package com.example.vietvan.lapitchat.model;
 
 public class Chat {
     public String seen;
-    public long time;
+    public long time, timestamp;
 
     public Chat() {
     }
@@ -30,5 +30,13 @@ public class Chat {
 
     public void setTime(long time) {
         this.time = time;
+    }
+
+    public long getTimestamp() {
+        return timestamp;
+    }
+
+    public void setTimestamp(long timestamp) {
+        this.timestamp = timestamp;
     }
 }

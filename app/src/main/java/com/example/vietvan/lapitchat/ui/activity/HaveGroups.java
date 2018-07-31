@@ -41,8 +41,11 @@ public class HaveGroups extends AppCompatActivity {
     DatabaseReference groups, root, users;
 
     String uid;
+    String content = "", time = "0", read = "", from = "";
+    String avatar = "", name = "";
     List<InfoGroup> list;
     public static List<String> keyList;
+    LinearLayoutManager mLinearLayout;
     HaveGroupAdapter adapter;
 
     @Override
@@ -61,9 +64,10 @@ public class HaveGroups extends AppCompatActivity {
         list = new ArrayList<>();
         keyList = new ArrayList<>();
         keyList.add(uid);
+        mLinearLayout = new LinearLayoutManager(this);
         adapter = new HaveGroupAdapter(list, this);
         rvChats.setHasFixedSize(true);
-        rvChats.setLayoutManager(new LinearLayoutManager(this));
+        rvChats.setLayoutManager(mLinearLayout);
         rvChats.setAdapter(adapter);
         rvChats.addOnItemTouchListener(new RecyclerItemClickListener(this, rvChats, new RecyclerItemClickListener.OnItemClickListener() {
             @Override
@@ -91,26 +95,45 @@ public class HaveGroups extends AppCompatActivity {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
 
-                Log.d(TAG, "onChildAdded: " + dataSnapshot.getKey() + "/");
-
-                String key = dataSnapshot.getKey();
-                String avatar = "", name = "";
+                final String key = dataSnapshot.getKey();
                 if(dataSnapshot.hasChild("info")){
 
                     avatar = dataSnapshot.child("info").child("avatar").getValue().toString();
                     name = dataSnapshot.child("info").child("name").getValue().toString();
                 }
 
-                String content = "", time = "0", read = "";
                 if(dataSnapshot.hasChild("last_message")){
 
                     content = dataSnapshot.child("last_message").child("content").getValue().toString();
                     time = dataSnapshot.child("last_message").child("time").getValue().toString();
                     read = dataSnapshot.child("last_message").child("read").getValue().toString();
+                    from = dataSnapshot.child("last_message").child("fromID").getValue().toString();
+
                 }
+                Log.d(TAG, "onChildAdded: 1111" + name + "/");
 
-                InfoGroup info = new InfoGroup(avatar, name, content, key, Long.parseLong(time), Boolean.parseBoolean(read));
+//                if(!from.equals("")){
+//                    Log.d(TAG, "onChildAdded: 2222");
+//                    users.child(from).addListenerForSingleValueEvent(new ValueEventListener() {
+//                        @Override
+//                        public void onDataChange(DataSnapshot dataSnapshot) {
+//
+//                            String fromID = dataSnapshot.child("name").getValue().toString();
+//
+//
+//
+//                        }
+//
+//                        @Override
+//                        public void onCancelled(DatabaseError databaseError) {
+//
+//                        }
+//                    });
+//
+//                }
 
+                InfoGroup info = new InfoGroup(avatar, name, content, key, Long.parseLong(time), Boolean.parseBoolean(read), "");
+                Log.d(TAG, "onDataChange: " + info);
                 list.add(info);
                 adapter.notifyDataSetChanged();
 

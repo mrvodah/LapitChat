@@ -101,7 +101,6 @@
                 android:layout_height="32dp"
                 android:background="@drawable/circle_bg_dot"
                 android:padding="7dp"
-                android:scaleType="center"
                 android:src="@drawable/chat" />
 
             <ImageView

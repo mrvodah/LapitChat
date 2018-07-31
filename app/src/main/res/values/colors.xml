@@ -11,9 +11,11 @@
     <color name="black">#000</color>
 
     <color name="purple">#9734be</color>
-    <color name="gray">#d2d2d2</color>
+    <color name="gray">#c3c3c3</color>
 
     <color name="sinch_purple">#ff63029d</color>
     <color name="off_white">#fffafafa</color>
     <color name="greyish">#fff2f1f2</color>
+
+    <color name="df">#c3c3c3</color>
 </resources>

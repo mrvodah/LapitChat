@@ -8,17 +8,27 @@ public class InfoGroup {
     public String avatar, name, content, key;
     public long time;
     public boolean read;
+    public String fromID;
 
     public InfoGroup() {
     }
 
-    public InfoGroup(String avatar, String name, String content, String key, long time, boolean read) {
+    public InfoGroup(String avatar, String name, String content, String key, long time, boolean read, String fromID) {
         this.avatar = avatar;
         this.name = name;
         this.content = content;
         this.key = key;
         this.time = time;
         this.read = read;
+        this.fromID = fromID;
+    }
+
+    public String getFromID() {
+        return fromID;
+    }
+
+    public void setFromID(String fromID) {
+        this.fromID = fromID;
     }
 
     public boolean isRead() {
@@ -67,5 +77,16 @@ public class InfoGroup {
 
     public void setTime(long time) {
         this.time = time;
+    }
+
+
+    @Override
+    public String toString() {
+        return "InfoGroup{" +
+                "name='" + name + '\'' +
+                ", content='" + content + '\'' +
+                ", key='" + key + '\'' +
+                ", fromID='" + fromID + '\'' +
+                '}';
     }
 }

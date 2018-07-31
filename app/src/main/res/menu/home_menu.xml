@@ -1,6 +1,13 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
+        android:id="@+id/mn_chat"
+        android:title="Chats"
+        app:showAsAction="ifRoom"
+        android:icon="@drawable/viber"
+        />
+
+    <item
         android:id="@+id/mn_account_settings"
         android:title="Account Settings"
         />
@@ -8,16 +15,6 @@
     <item
         android:id="@+id/mn_all_users"
         android:title="All Users"
-        />
-
-    <item
-        android:id="@+id/mn_group_chat"
-        android:title="Group Chat"
-        />
-
-    <item
-        android:id="@+id/mn_chats"
-        android:title="Chats"
         />
 
     <item

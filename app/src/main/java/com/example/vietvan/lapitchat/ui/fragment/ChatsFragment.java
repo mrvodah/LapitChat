@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -77,18 +78,6 @@ public class ChatsFragment extends Fragment {
         root = database.getReference();
         groups = database.getReference("groups");
 
-//        rvChats.addOnItemTouchListener(new RecyclerItemClickListener(getContext(), rvChats, new RecyclerItemClickListener.OnItemClickListener() {
-//            @Override
-//            public void onItemClick(View view, int position) {
-//
-//            }
-//
-//            @Override
-//            public void onLongItemClick(View view, int position) {
-//
-//            }
-//        }));
-
         mCurrentUid = Common.getUid();
 
         database = FirebaseDatabase.getInstance();
@@ -129,10 +118,19 @@ public class ChatsFragment extends Fragment {
                 lastMessageQuery.addChildEventListener(new ChildEventListener() {
                     @Override
                     public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                        Log.d(TAG, "onChildAdded: ");
                         rlEmpty.setVisibility(View.GONE);
 
                         String data = dataSnapshot.child("message").getValue().toString();
                         String time = dataSnapshot.child("time").getValue().toString();
+                        String seen = dataSnapshot.child("seen").getValue().toString();
+                        String from = dataSnapshot.child("from").getValue().toString();
+
+                        if(seen.equals("false") && !from.equals(mCurrentUid))
+                            viewHolder.setNotSeen();
+                        else
+                            viewHolder.setSeen();
+
                         viewHolder.setMessage(data);
 
                         Date date = new Date(Long.parseLong(time));
@@ -149,23 +147,30 @@ public class ChatsFragment extends Fragment {
 
                     @Override
                     public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+                        Log.d(TAG, "onChildChanged: ");
+                        String seen = dataSnapshot.child("seen").getValue().toString();
+                        String from = dataSnapshot.child("from").getValue().toString();
 
+                        if(seen.equals("false") && !from.equals(mCurrentUid))
+                            viewHolder.setNotSeen();
+                        else
+                            viewHolder.setSeen();
 
                     }
 
                     @Override
                     public void onChildRemoved(DataSnapshot dataSnapshot) {
-
+                        Log.d(TAG, "onChildRemoved: ");
                     }
 
                     @Override
                     public void onChildMoved(DataSnapshot dataSnapshot, String s) {
-
+                        Log.d(TAG, "onChildMoved: ");
                     }
 
                     @Override
                     public void onCancelled(DatabaseError databaseError) {
-
+                        Log.d(TAG, "onCancelled: ");
                     }
                 });
 

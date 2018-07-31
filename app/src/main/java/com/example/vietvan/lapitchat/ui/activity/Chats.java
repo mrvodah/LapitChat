@@ -1,14 +1,18 @@
 package com.example.vietvan.lapitchat.ui.activity;
 
+import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
+import android.support.v4.content.FileProvider;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -33,6 +37,7 @@ import com.example.vietvan.lapitchat.phonecall.PlaceCall;
 import com.example.vietvan.lapitchat.ui.adapter.MessagesAdapter;
 import com.example.vietvan.lapitchat.utils.Common;
 import com.example.vietvan.lapitchat.utils.GetTimeAgo;
+import com.example.vietvan.lapitchat.utils.ImageUtils;
 import com.example.vietvan.lapitchat.utils.ResizeWidthAnimation;
 import com.example.vietvan.lapitchat.videocall.Video_PlaceCall;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -50,11 +55,17 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.squareup.picasso.Picasso;
+import com.theartofdev.edmodo.cropper.CropImage;
+import com.theartofdev.edmodo.cropper.CropImageView;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -102,14 +113,16 @@ public class Chats extends AppCompatActivity implements MessagesAdapter.OnClickI
     public int mCurrentPage = 1;
     public int itemPos = 0;
     public String mLastKey = "", mPrevKey = "";
-    public boolean is = false;
+    public boolean is = false, time = true;
     public Handler handler;
     public Runnable runnable;
     public EmojIconActions emojIconActions;
+    String mCurrentPhotoPath;
 
     public User user;
+    Uri photoURI;
 
-    DatabaseReference root;
+    DatabaseReference root, messages;
     FirebaseAuth mAth;
     StorageReference mImageStorage;
 
@@ -120,6 +133,7 @@ public class Chats extends AppCompatActivity implements MessagesAdapter.OnClickI
         ButterKnife.bind(this);
 
         root = FirebaseDatabase.getInstance().getReference();
+        messages = FirebaseDatabase.getInstance().getReference();
         mAth = FirebaseAuth.getInstance();
         mImageStorage = FirebaseStorage.getInstance().getReference();
 
@@ -127,6 +141,8 @@ public class Chats extends AppCompatActivity implements MessagesAdapter.OnClickI
         mChatUser = getIntent().getStringExtra("uid");
         userName = getIntent().getStringExtra("user_name");
         thumb_image = getIntent().getStringExtra("image");
+
+        updateReadMess();
 
         tvName.setText(userName);
 
@@ -241,6 +257,8 @@ public class Chats extends AppCompatActivity implements MessagesAdapter.OnClickI
             public void onFocusChange(View v, boolean hasFocus) {
 
                 Log.d(TAG, "onFocusChange: focus");
+                time = true;
+                updateReadMess();
                 is = true;
                 setChangeImage();
                 setAnimation(edtMessage, 750, 300);
@@ -265,6 +283,8 @@ public class Chats extends AppCompatActivity implements MessagesAdapter.OnClickI
             @Override
             public void onClick(View v) {
                 Log.d(TAG, "onClick: click");
+                time = true;
+                updateReadMess();
                 is = true;
                 setChangeImage();
                 setAnimation(edtMessage, 750, 300);
@@ -317,6 +337,51 @@ public class Chats extends AppCompatActivity implements MessagesAdapter.OnClickI
             }
         });
 
+    }
+
+    private void updateReadMess() {
+        Log.d(TAG, "updateReadMess: ");
+        root.child("Messages").child(mCurrentUserId).child(mChatUser).orderByKey().limitToLast(1)
+                .addChildEventListener(new ChildEventListener() {
+                    @Override
+                    public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                        Log.d(TAG, "onChildAdded: 123456");
+                        if(time){
+                            time = false;
+                            String key = dataSnapshot.getKey();
+
+                            String ref_1 = "Messages/" + mChatUser + "/" + mCurrentUserId + "/" + key;
+                            String ref_2 = "Messages/" + mCurrentUserId + "/" + mChatUser + "/" + key;
+
+                            Map local = new HashMap();
+                            local.put(ref_1 + "/seen", "true");
+                            local.put(ref_2 + "/seen", "true");
+
+                            messages.updateChildren(local);
+                        }
+
+                    }
+
+                    @Override
+                    public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+
+                    }
+
+                    @Override
+                    public void onChildRemoved(DataSnapshot dataSnapshot) {
+
+                    }
+
+                    @Override
+                    public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+
+                    }
+                });
     }
 
     public void setAnimation(View v, int width, int duration) {
@@ -428,7 +493,7 @@ public class Chats extends AppCompatActivity implements MessagesAdapter.OnClickI
     }
 
     private void sendMessage() {
-
+        Log.d(TAG, "sendMessage: 1111");
         String message = edtMessage.getText().toString();
 
         if (!TextUtils.isEmpty(message)) {
@@ -515,15 +580,15 @@ public class Chats extends AppCompatActivity implements MessagesAdapter.OnClickI
 
                 break;
             case R.id.iv_camera:
-//                if (Build.VERSION.SDK_INT >= 23) {
-//                    if (checkSelfPermission(Manifest.permission.CAMERA)
-//                            != PackageManager.PERMISSION_GRANTED) {
-//                        requestPermissions(new String[]{Manifest.permission.CAMERA},
-//                                MY_CAMERA_PERMISSION_CODE);
-//                    } else {
-//                        openCamera();
-//                    }
-//                }
+                if (Build.VERSION.SDK_INT >= 23) {
+                    if (checkSelfPermission(Manifest.permission.CAMERA)
+                            != PackageManager.PERMISSION_GRANTED) {
+                        requestPermissions(new String[]{Manifest.permission.CAMERA},
+                                MY_CAMERA_PERMISSION_CODE);
+                    } else {
+                        dispatchTakePictureIntent();
+                    }
+                }
 
                 break;
             case R.id.iv_photo:
@@ -561,21 +626,10 @@ public class Chats extends AppCompatActivity implements MessagesAdapter.OnClickI
     }
 
     public void openCamera() {
-//        uri = ImageUtils.getUri(this);
-//        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-//        intent.putExtra(MediaStore.EXTRA_OUTPUT, uri);
-//        startActivityForResult(intent, CAMERA_REQUEST);
-
-        ImagePicker.cameraOnly().start(Chats.this); // Could be Activity, Fragment, Support Fragment
-
-//        ImagePicker.cameraOnly().getIntent(Chats.this);
-    }
-
-    public Uri getImageUri(Context inContext, Bitmap inImage) {
-        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
-        inImage.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
-        String path = MediaStore.Images.Media.insertImage(inContext.getContentResolver(), inImage, "Title", null);
-        return Uri.parse(path);
+        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        if (intent.resolveActivity(getPackageManager()) != null) {
+            startActivityForResult(intent, CAMERA_REQUEST);
+        }
     }
 
     public void sortArray(){
@@ -592,6 +646,44 @@ public class Chats extends AppCompatActivity implements MessagesAdapter.OnClickI
         });
     }
 
+    private File createImageFile() throws IOException {
+        // Create an image file name
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+        String imageFileName = "JPEG_" + timeStamp + "_";
+        File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+        File image = File.createTempFile(
+                imageFileName,  /* prefix */
+                ".jpg",         /* suffix */
+                storageDir      /* directory */
+        );
+
+        // Save a file: path for use with ACTION_VIEW intents
+        mCurrentPhotoPath = "file:" +image.getAbsolutePath();
+        return image;
+    }
+
+    private void dispatchTakePictureIntent() {
+        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        // Ensure that there's a camera activity to handle the intent
+        if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
+            // Create the File where the photo should go
+            File photoFile = null;
+            try {
+                photoFile = createImageFile();
+            } catch (IOException ex) {
+                // Error occurred while creating the File...
+            }
+            // Continue only if the File was successfully created
+            if (photoFile != null) {
+                photoURI = FileProvider.getUriForFile(this,
+                        this.getPackageName() + ".provider",
+                        photoFile);
+                takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
+                startActivityForResult(takePictureIntent, CAMERA_REQUEST);
+            }
+        }
+    }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -599,60 +691,6 @@ public class Chats extends AppCompatActivity implements MessagesAdapter.OnClickI
         if (requestCode == GALLERY_ITEM && resultCode == RESULT_OK) {
 
             Uri imageUri = data.getData();
-            Log.d(TAG, "onActivityResult: " + imageUri);
-
-            final String current_user_ref = "Messages/" + mCurrentUserId + "/" + mChatUser;
-            final String chat_user_ref = "Messages/" + mChatUser + "/" + mCurrentUserId;
-
-            DatabaseReference user_message_push = root.child("Messages")
-                    .child(mCurrentUserId).child(mChatUser).push();
-
-            final String push_id = user_message_push.getKey();
-
-            StorageReference filepath = mImageStorage.child("message_images/" + push_id + ".jpg");
-
-            filepath.putFile(imageUri).addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
-                @Override
-                public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
-
-                    if (task.isSuccessful()) {
-
-                        final String downloadUri = task.getResult().getDownloadUrl().toString();
-
-                        Map messageMap = new HashMap();
-                        messageMap.put("message", downloadUri);
-                        messageMap.put("seen", "false");
-                        messageMap.put("type", "image");
-                        messageMap.put("time", ServerValue.TIMESTAMP);
-                        messageMap.put("from", mCurrentUserId);
-
-                        Map messageeUserMap = new HashMap();
-                        messageeUserMap.put(current_user_ref + "/" + push_id, messageMap);
-                        messageeUserMap.put(chat_user_ref + "/" + push_id, messageMap);
-
-                        root.updateChildren(messageeUserMap, new DatabaseReference.CompletionListener() {
-                            @Override
-                            public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
-                                if (databaseError != null)
-                                    Log.d(TAG, "onComplete: " + databaseError.getMessage().toString());
-
-                            }
-                        });
-
-                    }
-
-                }
-            });
-        }
-
-        if (ImagePicker.shouldHandle(requestCode, resultCode, data)) {
-            // Get a list of picked images
-//            List<Image> images = ImagePicker.getImages(data);
-            // or get a single image only
-            Image image = ImagePicker.getFirstImageOrNull(data);
-
-            Uri imageUri = Uri.parse(image.getPath());
-            Log.d(TAG, "onActivityResult: 12345 / " + imageUri);
 
             final String current_user_ref = "Messages/" + mCurrentUserId + "/" + mChatUser;
             final String chat_user_ref = "Messages/" + mChatUser + "/" + mCurrentUserId;
@@ -700,51 +738,104 @@ public class Chats extends AppCompatActivity implements MessagesAdapter.OnClickI
 
         if (requestCode == CAMERA_REQUEST && resultCode == RESULT_OK) {
 
-//            Uri imageUri = uri;
-//
-//            final String current_user_ref = "Messages/" + mCurrentUserId + "/" + mChatUser;
-//            final String chat_user_ref = "Messages/" + mChatUser + "/" + mCurrentUserId;
-//
-//            DatabaseReference user_message_push = root.child("Messages")
-//                    .child(mCurrentUserId).child(mChatUser).push();
-//
-//            final String push_id = user_message_push.getKey();
-//
-//            StorageReference filepath = mImageStorage.child("message_images/" + push_id + ".jpg");
-//
-//            filepath.putFile(imageUri).addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
-//                @Override
-//                public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
-//
-//                    if (task.isSuccessful()) {
-//
-//                        final String downloadUri = task.getResult().getDownloadUrl().toString();
-//
-//                        Map messageMap = new HashMap();
-//                        messageMap.put("message", downloadUri);
-//                        messageMap.put("seen", "false");
-//                        messageMap.put("type", "image");
-//                        messageMap.put("time", ServerValue.TIMESTAMP);
-//                        messageMap.put("from", mCurrentUserId);
-//
-//                        Map messageeUserMap = new HashMap();
-//                        messageeUserMap.put(current_user_ref + "/" + push_id, messageMap);
-//                        messageeUserMap.put(chat_user_ref + "/" + push_id, messageMap);
-//
-//                        root.updateChildren(messageeUserMap, new DatabaseReference.CompletionListener() {
-//                            @Override
-//                            public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
-//                                if (databaseError != null)
-//                                    Log.d(TAG, "onComplete: " + databaseError.getMessage().toString());
-//
-//                            }
-//                        });
-//
-//                    }
-//
-//                }
-//            });
+            final String current_user_ref = "Messages/" + mCurrentUserId + "/" + mChatUser;
+            final String chat_user_ref = "Messages/" + mChatUser + "/" + mCurrentUserId;
 
+            DatabaseReference user_message_push = root.child("Messages")
+                    .child(mCurrentUserId).child(mChatUser).push();
+
+            final String push_id = user_message_push.getKey();
+
+            StorageReference filepath = mImageStorage.child("message_images/" + push_id + ".jpg");
+
+            filepath.putFile(photoURI).addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
+                @Override
+                public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
+
+                    if (task.isSuccessful()) {
+
+                        final String downloadUri = task.getResult().getDownloadUrl().toString();
+
+                        Map messageMap = new HashMap();
+                        messageMap.put("message", downloadUri);
+                        messageMap.put("seen", "false");
+                        messageMap.put("type", "image");
+                        messageMap.put("time", ServerValue.TIMESTAMP);
+                        messageMap.put("from", mCurrentUserId);
+
+                        Map messageeUserMap = new HashMap();
+                        messageeUserMap.put(current_user_ref + "/" + push_id, messageMap);
+                        messageeUserMap.put(chat_user_ref + "/" + push_id, messageMap);
+
+                        root.updateChildren(messageeUserMap, new DatabaseReference.CompletionListener() {
+                            @Override
+                            public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
+                                if (databaseError != null)
+                                    Log.d(TAG, "onComplete: " + databaseError.getMessage().toString());
+
+                            }
+                        });
+
+                    }
+
+                }
+            });
+
+        }
+
+        if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE) {
+            CropImage.ActivityResult result = CropImage.getActivityResult(data);
+            if (resultCode == RESULT_OK) {
+                Uri imageUri = result.getUri();
+
+                Log.d(TAG, "onActivityResult: " + imageUri);
+
+                final String current_user_ref = "Messages/" + mCurrentUserId + "/" + mChatUser;
+                final String chat_user_ref = "Messages/" + mChatUser + "/" + mCurrentUserId;
+
+                DatabaseReference user_message_push = root.child("Messages")
+                        .child(mCurrentUserId).child(mChatUser).push();
+
+                final String push_id = user_message_push.getKey();
+
+                StorageReference filepath = mImageStorage.child("message_images/" + push_id + ".jpg");
+
+                filepath.putFile(imageUri).addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
+
+                        if (task.isSuccessful()) {
+
+                            final String downloadUri = task.getResult().getDownloadUrl().toString();
+
+                            Map messageMap = new HashMap();
+                            messageMap.put("message", downloadUri);
+                            messageMap.put("seen", "false");
+                            messageMap.put("type", "image");
+                            messageMap.put("time", ServerValue.TIMESTAMP);
+                            messageMap.put("from", mCurrentUserId);
+
+                            Map messageeUserMap = new HashMap();
+                            messageeUserMap.put(current_user_ref + "/" + push_id, messageMap);
+                            messageeUserMap.put(chat_user_ref + "/" + push_id, messageMap);
+
+                            root.updateChildren(messageeUserMap, new DatabaseReference.CompletionListener() {
+                                @Override
+                                public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
+                                    if (databaseError != null)
+                                        Log.d(TAG, "onComplete: " + databaseError.getMessage().toString());
+
+                                }
+                            });
+
+                        }
+
+                    }
+                });
+
+            } else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {
+                Exception error = result.getError();
+            }
         }
 
     }

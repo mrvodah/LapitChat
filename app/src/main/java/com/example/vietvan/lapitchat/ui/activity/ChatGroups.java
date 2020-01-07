@@ -1,5 +1,6 @@
 package com.example.vietvan.lapitchat.ui.activity;
 
+import android.animation.Animator;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -12,6 +13,7 @@ import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
@@ -19,13 +21,13 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.daimajia.androidanimations.library.Techniques;
+import com.daimajia.androidanimations.library.YoYo;
 import com.example.vietvan.lapitchat.R;
 import com.example.vietvan.lapitchat.model.LastMessage;
-import com.example.vietvan.lapitchat.phonecall.PlaceCall;
 import com.example.vietvan.lapitchat.ui.adapter.LastMessageAdapter;
 import com.example.vietvan.lapitchat.utils.Common;
 import com.example.vietvan.lapitchat.utils.ResizeWidthAnimation;
-import com.example.vietvan.lapitchat.videocall.Video_PlaceCall;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
@@ -54,7 +56,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
 import hani.momanii.supernova_emoji_library.Actions.EmojIconActions;
 import hani.momanii.supernova_emoji_library.Helper.EmojiconEditText;
 
-public class ChatGroups extends AppCompatActivity implements LastMessageAdapter.OnClickItem{
+public class ChatGroups extends AppCompatActivity implements LastMessageAdapter.OnClickItem {
 
     private static final String TAG = "TAG";
     private static final int GALLERY_ITEM = 1;
@@ -98,17 +100,39 @@ public class ChatGroups extends AppCompatActivity implements LastMessageAdapter.
     public static final int TOTAL_ITEMS_TO_LOAD = 10;
     public int mCurrentPage = 1;
     public int itemPos = 0;
+    public int widthll = 0, widthed = 0;
     public String mLastKey = "", mPrevKey = "";
     public Handler handler;
     public Runnable runnable;
     public EmojIconActions emojIconActions;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat_groups);
         ButterKnife.bind(this);
+
+        DisplayMetrics displayMetrics = new DisplayMetrics();
+        getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
+        int height = displayMetrics.heightPixels;
+        int width = displayMetrics.widthPixels;
+        Log.d(TAG, "onCreate: " + width + "/" + height);
+
+        llCollapse.post(new Runnable() {
+            @Override
+            public void run() {
+                widthll = llCollapse.getWidth();
+                Log.d(TAG, "run: " + widthll);
+            }
+        });
+
+        edtMessage.post(new Runnable() {
+            @Override
+            public void run() {
+                widthed = edtMessage.getWidth();
+                Log.d(TAG, "run: " + widthed);
+            }
+        });
 
         uid = FirebaseAuth.getInstance().getUid();
         auth = FirebaseAuth.getInstance();
@@ -137,7 +161,8 @@ public class ChatGroups extends AppCompatActivity implements LastMessageAdapter.
         rvMessages.setAdapter(mAdapter);
 
         createNewConvers();
-        updateMessageUnread();
+        if (!isNew)
+            updateMessageUnread();
 
         // init swift
         swLayout.setColorSchemeResources(
@@ -189,19 +214,13 @@ public class ChatGroups extends AppCompatActivity implements LastMessageAdapter.
             public void onFocusChange(View v, boolean hasFocus) {
 
                 Log.d(TAG, "onFocusChange: focus");
-                is = true;
-                setChangeImage();
-                setAnimation(edtMessage, 750, 300);
-                setAnimation(llCollapse, 0, 300);
+                setChangeImage(true);
 
                 handler = new Handler();
                 handler.postDelayed(runnable = new Runnable() {
                     @Override
                     public void run() {
-                        is = false;
-                        setChangeImage();
-                        setAnimation(edtMessage, 480, 300);
-                        setAnimation(llCollapse, 267, 300);
+                        setChangeImage(false);
 
                     }
                 }, 5000);
@@ -213,19 +232,12 @@ public class ChatGroups extends AppCompatActivity implements LastMessageAdapter.
             @Override
             public void onClick(View v) {
                 Log.d(TAG, "onClick: click");
-                is = true;
-                setChangeImage();
-                setAnimation(edtMessage, 750, 300);
-                setAnimation(llCollapse, 0, 300);
-
+                setChangeImage(true);
                 handler = new Handler();
                 handler.postDelayed(runnable = new Runnable() {
                     @Override
                     public void run() {
-                        is = false;
-                        setChangeImage();
-                        setAnimation(edtMessage, 480, 300);
-                        setAnimation(llCollapse, 267, 300);
+                        setChangeImage(false);
 
                     }
                 }, 5000);
@@ -242,10 +254,8 @@ public class ChatGroups extends AppCompatActivity implements LastMessageAdapter.
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 Log.d(TAG, "onTextChanged: " + s + "/" + start + "/" + before + "/" + count);
                 if (s.equals("") || count == 0) {
-                    is = false;
-                    setChangeImage();
-                    setAnimation(edtMessage, 480, 300);
-                    setAnimation(llCollapse, 267, 300);
+                    setChangeImage(false);
+
                 } else {
 
                     handler.removeCallbacks(runnable);
@@ -279,11 +289,18 @@ public class ChatGroups extends AppCompatActivity implements LastMessageAdapter.
         v.setAnimation(ll);
     }
 
-    public void setChangeImage() {
-        if (!is)
+    public void setChangeImage(boolean iskick) {
+        if (!iskick) {
+            is = false;
+            setAnimation(edtMessage, widthed, 300);
+            setAnimation(llCollapse, widthll, 300);
             ivAdd.setImageResource(R.drawable.add);
-        else
+        } else {
+            is = true;
+            setAnimation(edtMessage, (int)Math.ceil(1.5 * widthed), 300);
+            setAnimation(llCollapse, 0, 300);
             ivAdd.setImageResource(R.drawable.fast_forward);
+        }
     }
 
     private void createNewConvers() {
@@ -293,7 +310,7 @@ public class ChatGroups extends AppCompatActivity implements LastMessageAdapter.
             String n = "";
             n += PickGroupChat.grList.get(0).getName();
 
-            for(int i=1;i<PickGroupChat.grList.size();i++)
+            for (int i = 1; i < PickGroupChat.grList.size(); i++)
                 n += ", " + PickGroupChat.grList.get(i).getName();
 
             DatabaseReference databaseReference = conversations.push();
@@ -432,6 +449,7 @@ public class ChatGroups extends AppCompatActivity implements LastMessageAdapter.
 
                         swLayout.setRefreshing(false);
 
+
                     }
 
                     @Override
@@ -568,12 +586,7 @@ public class ChatGroups extends AppCompatActivity implements LastMessageAdapter.
             case R.id.iv_add:
 
                 if (is) {
-
-                    is = false;
-                    setChangeImage();
-                    setAnimation(edtMessage, 480, 300);
-                    setAnimation(llCollapse, 267, 300);
-
+                    setChangeImage(false);
                 } else {
 
 
@@ -635,11 +648,11 @@ public class ChatGroups extends AppCompatActivity implements LastMessageAdapter.
 
         String message = "";
 
-        if(type.equals("text")){
+        if (type.equals("text")) {
             message = edtMessage.getText().toString();
             edtMessage.setText("");
 
-        } else if(type.equals("image")){
+        } else if (type.equals("image")) {
             message = src;
         }
 
@@ -662,7 +675,7 @@ public class ChatGroups extends AppCompatActivity implements LastMessageAdapter.
 
                 String chat_user_ref = "groups/" + key + "/" + push_convers_id;
 
-                if(uid.equals(key))
+                if (uid.equals(key))
                     local.put("read", true);
                 else
                     local.put("read", false);
@@ -686,10 +699,7 @@ public class ChatGroups extends AppCompatActivity implements LastMessageAdapter.
 
     @Override
     public void onClick() {
-        is = false;
-        setChangeImage();
-        setAnimation(edtMessage, 480, 300);
-        setAnimation(llCollapse, 267, 300);
+        setChangeImage(false);
         Common.hideKeyboard(ChatGroups.this);
     }
 

@@ -51,7 +51,7 @@ public class GetTimeAgo extends Application {
         } else if (diff < 50 * MINUTE_MILLIS) {
             return "Active " + diff / MINUTE_MILLIS + " minutes ago";
         } else if (diff < 90 * MINUTE_MILLIS) {
-            return "Active" + "an hour ago";
+            return "Active " + "an hour ago";
         } else if (diff < 24 * HOUR_MILLIS) {
             return diff / HOUR_MILLIS + " hours ago";
         } else if (diff < 48 * HOUR_MILLIS) {

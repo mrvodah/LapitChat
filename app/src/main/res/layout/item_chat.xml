@@ -12,8 +12,10 @@
         android:src="@drawable/user" />
 
     <TextView
+        android:maxLines="1"
+        android:ellipsize="end"
         android:id="@+id/tv_name"
-        android:layout_width="wrap_content"
+        android:layout_width="200dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="1dp"
         android:layout_toRightOf="@id/iv_user"
@@ -30,7 +32,6 @@
         android:layout_toRightOf="@id/iv_user"
         android:maxLines="1"
         android:ellipsize="end"
-        android:text="Status"
         android:textStyle="italic" />
 
     <ImageView

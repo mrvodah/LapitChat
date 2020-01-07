@@ -57,7 +57,7 @@ public class HaveGroupAdapter extends RecyclerView.Adapter<HaveGroupAdapter.Have
 
     @Override
     public void onBindViewHolder(final HaveGroupViewHolder holder, final int position) {
-        holder.setMessage(list.get(position).getFromID() + ": " + list.get(position).getContent());
+        holder.setMessage(list.get(position).getContent());
         holder.setName(list.get(position).getName());
 
         Date date = new Date(list.get(position).getTime());

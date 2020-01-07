@@ -44,7 +44,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="60dp"
                     android:hint="Email ..."
-                    android:text="chi@gmail.com"
+                    android:text="vietvan@gmail.com"
                     android:inputType="textEmailAddress" />
             </android.support.design.widget.TextInputLayout>
 

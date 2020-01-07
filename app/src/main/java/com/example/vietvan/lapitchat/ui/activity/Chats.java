@@ -350,11 +350,9 @@ public class Chats extends AppCompatActivity implements MessagesAdapter.OnClickI
                             time = false;
                             String key = dataSnapshot.getKey();
 
-                            String ref_1 = "Messages/" + mChatUser + "/" + mCurrentUserId + "/" + key;
                             String ref_2 = "Messages/" + mCurrentUserId + "/" + mChatUser + "/" + key;
 
                             Map local = new HashMap();
-                            local.put(ref_1 + "/seen", "true");
                             local.put(ref_2 + "/seen", "true");
 
                             messages.updateChildren(local);
@@ -658,7 +656,7 @@ public class Chats extends AppCompatActivity implements MessagesAdapter.OnClickI
         );
 
         // Save a file: path for use with ACTION_VIEW intents
-        mCurrentPhotoPath = "file:" +image.getAbsolutePath();
+        mCurrentPhotoPath = "file:" + image.getAbsolutePath();
         return image;
     }
 

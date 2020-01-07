@@ -80,7 +80,7 @@ public class LastMessageAdapter extends RecyclerView.Adapter<LastMessageAdapter.
             });
             holder.setImage(list.get(position).getContent());
         } else
-        holder.setData(list.get(position));
+            holder.setData(list.get(position));
 
         if(holder.name != null)
             holder.setname(list.get(position).getName());

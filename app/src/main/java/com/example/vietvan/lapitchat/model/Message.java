@@ -7,6 +7,7 @@ package com.example.vietvan.lapitchat.model;
 public class Message {
     public String message, seen, type, from;
     public long time;
+    public String name, image, online, key;
 
     public Message() {
     }
@@ -17,6 +18,48 @@ public class Message {
         this.type = type;
         this.from = from;
         this.time = time;
+    }
+
+    public Message(String message, String seen, String from, long time, String name, String image, String online) {
+        this.message = message;
+        this.seen = seen;
+        this.from = from;
+        this.time = time;
+        this.name = name;
+        this.image = image;
+        this.online = online;
+    }
+
+    public String getKey() {
+        return key;
+    }
+
+    public void setKey(String key) {
+        this.key = key;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getImage() {
+        return image;
+    }
+
+    public void setImage(String image) {
+        this.image = image;
+    }
+
+    public String getOnline() {
+        return online;
+    }
+
+    public void setOnline(String online) {
+        this.online = online;
     }
 
     public String getMessage() {

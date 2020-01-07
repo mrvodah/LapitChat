@@ -1,6 +1,7 @@
 package com.example.vietvan.lapitchat.ui.activity;
 
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -25,6 +26,8 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import butterknife.BindView;
@@ -47,6 +50,8 @@ public class HaveGroups extends AppCompatActivity {
     public static List<String> keyList;
     LinearLayoutManager mLinearLayout;
     HaveGroupAdapter adapter;
+
+    int count = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,7 +81,7 @@ public class HaveGroups extends AppCompatActivity {
                 intent.putExtra("is", false);
                 intent.putExtra("key", list.get(position).getKey());
                 startActivity(intent);
-                finish();
+//                finish();
             }
 
             @Override
@@ -96,6 +101,7 @@ public class HaveGroups extends AppCompatActivity {
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
 
                 final String key = dataSnapshot.getKey();
+                count++;
                 if(dataSnapshot.hasChild("info")){
 
                     avatar = dataSnapshot.child("info").child("avatar").getValue().toString();
@@ -110,37 +116,44 @@ public class HaveGroups extends AppCompatActivity {
                     from = dataSnapshot.child("last_message").child("fromID").getValue().toString();
 
                 }
-                Log.d(TAG, "onChildAdded: 1111" + name + "/");
-
-//                if(!from.equals("")){
-//                    Log.d(TAG, "onChildAdded: 2222");
-//                    users.child(from).addListenerForSingleValueEvent(new ValueEventListener() {
-//                        @Override
-//                        public void onDataChange(DataSnapshot dataSnapshot) {
-//
-//                            String fromID = dataSnapshot.child("name").getValue().toString();
-//
-//
-//
-//                        }
-//
-//                        @Override
-//                        public void onCancelled(DatabaseError databaseError) {
-//
-//                        }
-//                    });
-//
-//                }
 
                 InfoGroup info = new InfoGroup(avatar, name, content, key, Long.parseLong(time), Boolean.parseBoolean(read), "");
-                Log.d(TAG, "onDataChange: " + info);
                 list.add(info);
+                sortList();
                 adapter.notifyDataSetChanged();
 
             }
 
             @Override
             public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+
+                final String key = dataSnapshot.getKey();
+
+                for(int i=0;i<list.size();i++)
+                    if(list.get(i).getKey().equals(key)){
+                        list.remove(i);
+                        break;
+                    }
+
+                if(dataSnapshot.hasChild("info")){
+
+                    avatar = dataSnapshot.child("info").child("avatar").getValue().toString();
+                    name = dataSnapshot.child("info").child("name").getValue().toString();
+                }
+
+                if(dataSnapshot.hasChild("last_message")){
+
+                    content = dataSnapshot.child("last_message").child("content").getValue().toString();
+                    time = dataSnapshot.child("last_message").child("time").getValue().toString();
+                    read = dataSnapshot.child("last_message").child("read").getValue().toString();
+                    from = dataSnapshot.child("last_message").child("fromID").getValue().toString();
+
+                }
+
+                InfoGroup info = new InfoGroup(avatar, name, content, key, Long.parseLong(time), Boolean.parseBoolean(read), "");
+                list.add(0, info);
+                sortList();
+                adapter.notifyDataSetChanged();
 
             }
 
@@ -160,6 +173,21 @@ public class HaveGroups extends AppCompatActivity {
             }
         });
 
+    }
+
+    public void sortList(){
+        Collections.sort(list, new Comparator<InfoGroup>(){
+            public int compare(InfoGroup obj1, InfoGroup obj2) {
+                // ## Ascending order
+//                return obj1.firstName.compareToIgnoreCase(obj2.firstName); // To compare string values
+                // return Integer.valueOf(obj1.empId).compareTo(obj2.empId); // To compare integer values
+
+                   return Long.compare(obj2.getTime(), obj1.getTime());
+                // ## Descending order
+                // return obj2.firstName.compareToIgnoreCase(obj1.firstName); // To compare string values
+                // return Integer.valueOf(obj2.empId).compareTo(obj1.empId); // To compare integer values
+            }
+        });
     }
 
     @OnClick(R.id.iv_back)

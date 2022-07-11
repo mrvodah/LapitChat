@@ -45,15 +45,15 @@
 
         <TextView
             android:id="@+id/tv_lastSeen"
-            android:maxLines="1"
-            android:ellipsize="end"
-            android:textSize="12sp"
-            android:textColor="@color/white"
+            android:layout_width="90dp"
+            android:layout_height="wrap_content"
             android:layout_below="@id/tv_name"
             android:layout_toRightOf="@id/iv_ava"
+            android:ellipsize="end"
+            android:maxLines="1"
             android:text="Active 5 minutes"
-            android:layout_width="90dp"
-            android:layout_height="wrap_content" />
+            android:textColor="@color/white"
+            android:textSize="12sp" />
 
         <ImageView
             android:scaleType="center"
@@ -153,15 +153,14 @@
             android:orientation="horizontal">
 
             <FrameLayout
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
+                android:layout_weight="1"
                 android:layout_height="wrap_content">
 
                 <hani.momanii.supernova_emoji_library.Helper.EmojiconEditText
                     android:id="@+id/edt_message"
-                    android:layout_width="160dp"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="10dp"
-                    android:layout_marginRight="10dp"
                     android:background="@drawable/bg_edt"
                     android:hint="Type a message"
                     android:inputType="textCapSentences|textMultiLine"

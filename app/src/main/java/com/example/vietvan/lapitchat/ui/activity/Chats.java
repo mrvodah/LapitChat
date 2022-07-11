@@ -263,6 +263,7 @@ public class Chats extends AppCompatActivity implements MessagesAdapter.OnClickI
                 setChangeImage();
                 setAnimation(edtMessage, 750, 300);
                 setAnimation(llCollapse, 0, 300);
+                llCollapse.setVisibility(View.GONE);
 
                 handler = new Handler();
                 handler.postDelayed(runnable = new Runnable() {
@@ -272,6 +273,7 @@ public class Chats extends AppCompatActivity implements MessagesAdapter.OnClickI
                         setChangeImage();
                         setAnimation(edtMessage, 480, 300);
                         setAnimation(llCollapse, 267, 300);
+                        llCollapse.setVisibility(View.VISIBLE);
 
                     }
                 }, 5000);
@@ -289,6 +291,7 @@ public class Chats extends AppCompatActivity implements MessagesAdapter.OnClickI
                 setChangeImage();
                 setAnimation(edtMessage, 750, 300);
                 setAnimation(llCollapse, 0, 300);
+                llCollapse.setVisibility(View.GONE);
 
                 handler = new Handler();
                 handler.postDelayed(runnable = new Runnable() {
@@ -298,6 +301,7 @@ public class Chats extends AppCompatActivity implements MessagesAdapter.OnClickI
                         setChangeImage();
                         setAnimation(edtMessage, 480, 300);
                         setAnimation(llCollapse, 267, 300);
+                        llCollapse.setVisibility(View.VISIBLE);
 
                     }
                 }, 5000);
@@ -318,12 +322,14 @@ public class Chats extends AppCompatActivity implements MessagesAdapter.OnClickI
                     setChangeImage();
                     setAnimation(edtMessage, 750, 300);
                     setAnimation(llCollapse, 0, 300);
+                    llCollapse.setVisibility(View.GONE);
                 }
                 if (s.equals("") || count == 0) {
                     is = false;
                     setChangeImage();
                     setAnimation(edtMessage, 480, 300);
                     setAnimation(llCollapse, 267, 300);
+                    llCollapse.setVisibility(View.VISIBLE);
                 } else {
 
                     handler.removeCallbacks(runnable);
@@ -383,10 +389,10 @@ public class Chats extends AppCompatActivity implements MessagesAdapter.OnClickI
     }
 
     public void setAnimation(View v, int width, int duration) {
-        ResizeWidthAnimation ll = new ResizeWidthAnimation(v, width);
-        ll.setDuration(duration);
-        v.clearAnimation();
-        v.setAnimation(ll);
+//        ResizeWidthAnimation ll = new ResizeWidthAnimation(v, width);
+//        ll.setDuration(duration);
+//        v.clearAnimation();
+//        v.setAnimation(ll);
     }
 
     private void loadMoreMessage() {
@@ -570,6 +576,7 @@ public class Chats extends AppCompatActivity implements MessagesAdapter.OnClickI
                     setChangeImage();
                     setAnimation(edtMessage, 480, 300);
                     setAnimation(llCollapse, 267, 300);
+                    llCollapse.setVisibility(View.VISIBLE);
 
                 } else {
 
@@ -851,6 +858,7 @@ public class Chats extends AppCompatActivity implements MessagesAdapter.OnClickI
         setChangeImage();
         setAnimation(edtMessage, 480, 300);
         setAnimation(llCollapse, 267, 300);
+        llCollapse.setVisibility(View.VISIBLE);
         Common.hideKeyboard(Chats.this);
     }
 }
